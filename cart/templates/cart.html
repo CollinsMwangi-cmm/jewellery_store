@@ -1,0 +1,53 @@
+{% load cart_filters %} {% include 'base.html' %} {% load static %}
+
+<div class="cart-container">
+  <h1>Your Cart</h1>
+
+  {% if cart_products|length == 0 %}
+  <p class="empty-cart-message">There is nothing in your cart.</p>
+  {% else %} {% for product in cart_products %}
+  <div class="cart-items">
+    <div class="cart-item">
+      <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+      <div class="item-details">
+        <h2>{{ product.name }}</h2>
+        {% if product.is_sale %}
+        <strike>
+          <p>Price: ${{ product.price }}</p>
+        </strike>
+        <p>Sale Price: ${{ product.sale_price }}</p>
+        {% else %}
+        <p>Price: ${{ product.price }}</p>
+        {% endif %}
+        <div class="row justify-content">
+          Quantity:
+          <div class="col-md-2">
+            <input type="number" min="0" max="99999" step="1"
+            class="form-control form-control-sm cart-qty-input" id="cart-qty-{{
+            product.id }}" value="{{ quantities|get_item:product.id|default:"1"
+            }}" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% endif %}
+
+  <br />
+
+  <div class="cart-summary">
+    <h2>Cart Summary</h2>
+    <p>Total: ${{ total_price }}</p>
+    <a href="#" class="btn btn-primary">Checkout</a>
+  </div>
+</div>
+
+<style>
+  .empty-cart-message {
+    color: black; /* Red color for visibility */
+    font-size: 1.5em; /* Larger font size */
+    text-align: center; /* Center the message */
+    margin-top: 20px; /* Space above the message */
+    font-weight: 300;
+  }
+</style>

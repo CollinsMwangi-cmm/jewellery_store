@@ -1,0 +1,66 @@
+{% include 'home.html' %} {%load static%} {% block content %}
+
+<div class="main-section">
+  <div class="home-section"></div>
+
+  <div class="chain-section">
+    <h1 class="heading-logo">Chain</h1>
+    <div class="listproduct">
+      {% for product in products %} {% if product.is_sale %}
+
+      <div class="item">
+        <div class="image-container">
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+          <a href="{% url 'product_detail' product.id %}" class="view_link"
+            >View</a
+          >
+        </div>
+        <h2>{{ product.name }}</h2>
+        <strike> <div class="price">${{ product.price }}</div></strike>
+        <div class="price">${{ product.sale_price }}</div>
+        {% if quantities and product.id|stringformat:"s" in quantities %}
+        <a href="{% url 'cart' %}" class="view-cart-link">View Cart</a>
+        {% else %}
+        <button
+          class="addCart"
+          value="{{product.id}}"
+          data-product-id="{{product.id}}"
+          type="button"
+        >
+          ADD TO CART
+        </button>
+        {% endif %}
+      </div>
+
+      {% else %}
+
+      <div class="item">
+        <div class="image-container">
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+          <a href="{% url 'product_detail' product.id %}" class="view_link"
+            >View</a
+          >
+        </div>
+        <h2>{{ product.name }}</h2>
+        <div class="price">${{ product.price }}</div>
+        {% if quantities and product.id|stringformat:"s" in quantities %}
+        <a href="{% url 'cart' %}" class="view-cart-link">View Cart</a>
+        {% else %}
+        <button
+          class="addCart"
+          value="{{product.id}}"
+          data-product-id="{{ product.id }}"
+          type="button"
+        >
+          ADD TO CART
+        </button>
+        {% endif %}
+      </div>
+
+      {% endif %} {% empty %}
+      <p>No products available.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

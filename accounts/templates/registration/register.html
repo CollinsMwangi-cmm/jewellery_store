@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Register page</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Link to Font Awesome Free's CSS files -->
+    <link
+      href="{% static 'fontawesomefree/css/fontawesome.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'fontawesomefree/css/brands.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+  <body>
+    <section
+      style="
+        background: url('{% static 'accounts/img/Diamond_background.jpeg' %}')
+          no-repeat;
+        background-size: cover;
+        background-position: center;
+      "
+    >
+      <div class="Register-box">
+        <form method="POST" action="">
+          {% csrf_token %}
+          <h2>Register Account</h2>
+{% if messages %}
+     {% for message in messages  %}
+
+     <div class="alert alert-warning alert-dismissible fade show" role="alert">
+         {{ message }}
+         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+
+      {% endfor %}
+
+
+    {% endif %}
+          <div class="input-box">
+            <span class="icon"> <i class="fa-solid fa-user"></i></span>
+            {{form.username}}
+            <label for="{{ form.username.id_for_label }}">Username</label>
+          </div>
+
+          <div class="input-box">
+            <span class="icon"><i class="fa-solid fa-envelope"></i></span>
+            {{ form.email }}
+
+            <label for="{{ form.email.id_for_label }}">Email</label>
+          </div>
+
+          <div class="input-box">
+            <span class="icon"><i class="fa-solid fa-lock"></i></span>
+            {{form.password1}}
+            <label for="{{form.password1.id_for_label}}">Password</label>
+          </div>
+
+          <div class="input-box">
+            <span class="icon"><i class="fa-solid fa-lock"></i></span>
+            {{form.password2}}
+            <label for="{{form.password2.id_for_label}}"
+              >Password confirmation</label
+            >
+          </div>
+
+          <button type="submit">Register</button>
+          <div class="register-link">
+            <p>
+              Already have an account?<a href="{% url 'login-page' %}">Login</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </section>
+  </body>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+
+    section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100vh;
+      animation: animateBG 5s linear infinite;
+    }
+
+    @keyframes animateBG {
+      100% {
+        filter: hue-rotate(360deg);
+      }
+    }
+
+    .Register-box {
+      position: relative;
+      width: 400px;
+      height: 500px;
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 5);
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(15px);
+    }
+
+    h2 {
+      font-size: 1.5em;
+      color: #fff;
+      text-align: center;
+    }
+
+    .input-box {
+      position: relative;
+      width: 310px;
+      margin: 30px 0;
+      border-bottom: 2px solid #fff;
+    }
+
+    .input-box label {
+      position: absolute;
+      top: 50%;
+      left: 5px;
+      transform: translateY(-50%);
+      font-size: 1em;
+      color: #fff;
+      pointer-events: none;
+      transition: 0.5s;
+    }
+
+    .input-box input {
+      width: 100%;
+      height: 50px;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 1em;
+      color: #fff;
+      padding: 0 35px 0 5px;
+    }
+    .input-box .icon {
+      position: absolute;
+      right: 8px;
+      color: #fff;
+      font-size: 1.2em;
+      line-height: 57px;
+    }
+
+    .input-box input:focus ~ label,
+    .input-box input:valid ~ label {
+      top: 5px;
+    }
+
+    button {
+      width: 100%;
+      height: 40px;
+      background: #fff;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 1em;
+      color: #000;
+      font-weight: 500;
+    }
+
+    .register-link {
+      font-size: 0.9em;
+      color: #fff;
+      text-align: center;
+      margin: 25px 0 10px;
+    }
+
+    .register-link p a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .register-link p a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 360px) {
+      .login-box {
+        width: 100%;
+        height: 100vh;
+        border: none;
+        border-radius: 0;
+      }
+
+      .input-box {
+        width: 290px;
+      }
+    }
+  </style>
+</html>

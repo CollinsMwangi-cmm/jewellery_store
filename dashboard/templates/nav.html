@@ -1,0 +1,21 @@
+{% include 'base.html' %} {% load static %}
+<header>
+  <div class="header-section2">
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="{% url 'chains' %}">Diamond Chains</a>
+      <a href="{% url 'pendants' %}">Pendants</a>
+      <a href="{% url 'rings' %}">Rings</a>
+      <a href="{% url 'bracelets' %}">Bracelets</a>
+      <a href="{% url 'earrings' %}">Earrings</a>
+      <a href="{% url 'grills' %}">Grills</a>
+    </div>
+
+    <div class="search-box">
+      <div class="search-container">
+        <input type="search" name="" placeholder="Search for jewellery.." />
+        <a href="http://"> <i class="fa-solid fa-magnifying-glass"></i></a>
+      </div>
+    </div>
+  </div>
+</header>
