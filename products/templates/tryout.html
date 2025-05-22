@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="tryout_container">
+    <h1>Tryout- {{ product.name }}</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ product.image.url }}" id="productImage"  style="display: none;"  alt="{{ product.name }}">
+            </div>
+            <div class="col-md-6">
+                <div class="tryout_interface">
+                    <h3>Try On Instruction</h3>
+                    <p>To try this {{ product.get_product_type_display }}:</p>
+                    <ol>
+                        <li>Enable your camera or upload a photo</li>
+                        <li>Face the camera directly</li>
+                        <li>wait for facial recognition to initialize</li>
+                    </ol>
+
+                    <div class="camera-section">
+                        <button class="btn btn-primary mb-3" id="startCamera">Enable Camera</button>
+                        <video id="webcam" style="display: none;" width="100%" autoplay playsinline></video>
+                        <canvas id="tryonCanvas" style="display: none;"></canvas>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary"> Back to product</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/facemesh"></script>
+
+<script>
+let model;
+let ctx;
+let videoElement;
+let canvasElement;
+
+async function setupWebcam() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({video: true});
+        videoElement = document.getElementById('webcam');
+        videoElement.srcObject = stream;
+        videoElement.style.display = 'block';
+        document.getElementById('startCamera').style.display = 'none';
+
+        // Setup canvas
+        canvasElement = document.getElementById('tryonCanvas');
+        canvasElement.style.display = 'block';
+        ctx = canvasElement.getContext('2d');
+
+        // Match canvas size to video
+        canvasElement.width = videoElement.videoWidth;
+        canvasElement.height = videoElement.videoHeight;
+
+        // Load the face mesh model
+        model = await facemesh.load({
+            maxFaces: 1
+        });
+
+        // Start detection loop
+        detectFace();
+
+    } catch (err) {
+        console.error('Error accessing camera:', err);
+        alert('Could not access camera. Please make sure you have granted camera permission');
+    }
+}
+
+async function detectFace() {
+    if (videoElement.readyState === 4) {
+        // Get face predictions
+        const predictions = await model.estimateFaces(videoElement);
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+        // Draw video frame
+        ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+
+        if (predictions.length > 0) {
+            predictions.forEach(prediction => {
+                const productType = "{{ product.product_type }}";
+
+                // Get relevant facial landmarks based on product type
+                if (productType === 'earring') {
+                    // Points for ears (approximate using face mesh points)
+                    const leftEar = prediction.scaledMesh[234];
+                    const rightEar = prediction.scaledMesh[454];
+                    overlayJewelry(leftEar, rightEar, productType);
+                } else if (productType === 'necklace' || productType === 'chain') {
+                    // Points for neck area
+                    const neckPoint = prediction.scaledMesh[152];
+                    overlayJewelry(neckPoint, null, productType);
+                } else if (productType === 'grill') {
+                    // Points for mouth
+                    const mouthCenter = prediction.scaledMesh[13];
+                    overlayJewelry(mouthCenter, null, productType);
+                }
+            });
+        }
+    }
+
+    requestAnimationFrame(detectFace);
+}
+
+function overlayJewelry(point1, point2, productType) {
+    const productImage = document.getElementById('productImage');
+
+    if (productType === 'earring' && point2) {
+        // Draw earrings on both sides
+        ctx.drawImage(productImage, point1[0], point1[1], 30, 30);
+        ctx.drawImage(productImage, point2[0], point2[1], 30, 30);
+    } else {
+        // Draw single jewelry item
+        ctx.drawImage(productImage, point1[0], point1[1], 50, 50);
+    }
+}
+
+document.getElementById('startCamera').addEventListener('click', setupWebcam);
+</script>
+
+
+
+{% endblock %}

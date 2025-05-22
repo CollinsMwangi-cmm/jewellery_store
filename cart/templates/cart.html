@@ -1,13 +1,16 @@
 {% load cart_filters %} {% include 'base.html' %} {% load static %}
 
 <div class="cart-container">
+{% csrf_token %}
   <h1>Your Cart</h1>
 
   {% if cart_products|length == 0 %}
   <p class="empty-cart-message">There is nothing in your cart.</p>
   {% else %} {% for product in cart_products %}
   <div class="cart-items">
+
     <div class="cart-item">
+    <i class="fa-regular fa-trash" data-product-id="{{ product.id }}" style="cursor: pointer;"></i>
       <img src="{{ product.image.url }}" alt="{{ product.name }}" />
       <div class="item-details">
         <h2>{{ product.name }}</h2>
@@ -19,15 +22,23 @@
         {% else %}
         <p>Price: ${{ product.price }}</p>
         {% endif %}
-        <div class="row justify-content">
-          Quantity:
-          <div class="col-md-2">
-            <input type="number" min="0" max="99999" step="1"
-            class="form-control form-control-sm cart-qty-input" id="cart-qty-{{
-            product.id }}" value="{{ quantities|get_item:product.id|default:"1"
-            }}" />
-          </div>
-        </div>
+        <div class="row justify-content-start align-items-center">
+  <label for="cart-qty-{{ product.id }}" class="col-auto">Quantity:</label>
+  <div class="col-md-2">
+    <input 
+      type="number" 
+      min="1" 
+      max="99999" 
+      step="1"
+      pattern="\d*"
+      class="form-control form-control-sm cart-qty-input" 
+      id="cart-qty-{{ product.id }}"
+      name="cart-qty-{{ product.id }}"
+      value="{{ quantities|get_item:product.id|default:'1'|escape }}"
+      aria-label="Product quantity"
+    />
+  </div>
+</div>
       </div>
     </div>
   </div>
@@ -51,3 +62,4 @@
     font-weight: 300;
   }
 </style>
+<script src="{% static 'cart/js/cart.js' %}"></script>

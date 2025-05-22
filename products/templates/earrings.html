@@ -18,14 +18,18 @@
         <h2>{{ product.name }}</h2>
         <strike> <div class="price">${{ product.price }}</div></strike>
         <div class="price">${{ product.sale_price }}</div>
+        {% if quantities and product.id|stringformat:"s" in quantities %}
+        <a href="{% url 'cart' %}" class="view-cart-link">View Cart</a>
+        {% else %}
         <button
           class="addCart"
           value="{{product.id}}"
-          data-product-id="{{ product.id }}"
+          data-product-id="{{product.id}}"
           type="button"
         >
           ADD TO CART
         </button>
+        {% endif %}
       </div>
 
       {% else %}
@@ -39,6 +43,9 @@
         </div>
         <h2>{{ product.name }}</h2>
         <div class="price">${{ product.price }}</div>
+        {% if quantities and product.id|stringformat:"s" in quantities %}
+        <a href="{% url 'cart' %}" class="view-cart-link">View Cart</a>
+        {% else %}
         <button
           class="addCart"
           value="{{product.id}}"
@@ -46,7 +53,8 @@
           type="button"
         >
           ADD TO CART
-        </button>
+        </button> <i class="fa-regular fa-heart"></i>
+        {% endif %}
       </div>
 
       {% endif %} {% empty %}

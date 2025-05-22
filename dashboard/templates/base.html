@@ -41,6 +41,10 @@
       type="text/css"
       href="{% static 'dashboard/css/style.css' %}"
     />
+
+
+
+
   </head>
   <body>
 
@@ -151,7 +155,7 @@
         e.preventDefault();
         var productId = $(this).data('product-id');
         var productQty = $('#cart-qty-' + productId + ' option:selected').val(); // Use the unique ID
-    
+
         $.ajax({
             type: 'POST',
             url: '{% url 'add_to_cart' %}',
@@ -170,8 +174,38 @@
             }
         });
     });
-    
-    </script>
-      
+      $(document).on('click', '.fa-trash', function(e){
+    e.preventDefault();
+    var productId = $(this).data('product-id');
+    var itemElement = $(this).closest('.cart-item');
+    var deleteUrl = `/cart/delete/${productId}/`;
 
-      </html>
+    $.ajax({
+        type: 'POST',
+        url: deleteUrl,
+        headers: {
+            'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
+        },
+        success: function(response){
+            itemElement.fadeOut(300, function(){
+                $(this).remove();
+                $('#cartcount').text(response.qty);
+                $('.cart-summary p').text('Total: $' + response.total_price);
+
+                if (response.qty === 0) {
+                    location.reload(); // Reload the page if cart is empty
+                }
+            });
+        },
+        error: function(xhr, errmsg, err){
+            console.error('Error:', xhr.responseJSON);
+            alert('Error removing item from cart. Please try again.');
+        }
+    });
+});
+    </script>
+
+
+
+  </body>
+</html>
